@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI CV Screening Tool - Free Demo</title>
+    <meta name="description" content="Screen CVs in seconds, not hours. Free AI-powered recruitment tool by Streets Digital.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        .step {
+            margin-bottom: 40px;
+            padding: 30px;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .step.active {
+            border-color: #667eea;
+            background: #f8faff;
+        }
+
+        .step.completed {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .step.completed .step-number {
+            background: #10b981;
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .textarea-container {
+            margin-bottom: 20px;
+        }
+
+        .textarea-container textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .textarea-container textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .file-upload-area {
+            border: 3px dashed #d1d5db;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background: #f8faff;
+        }
+
+        .file-upload-area.drag-over {
+            border-color: #667eea;
+            background: #f0f9ff;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #9ca3af;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 1.2rem;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: #9ca3af;
+        }
+
+        .button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .button-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .button-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+
+        .button-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 2px solid #e5e7eb;
+        }
+
+        .button-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .processing {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            margin-top: 30px;
+        }
+
+        .results-header {
+            background: #f8faff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .results-header h3 {
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+
+        .time-saved {
+            font-size: 1.1rem;
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .candidate-list {
+            margin-top: 20px;
+        }
+
+        .candidate-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .candidate-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .candidate-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .candidate-name {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .candidate-score {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #059669;
+            margin-left: auto;
+        }
+
+        .candidate-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .highlights {
+            margin-top: 15px;
+        }
+
+        .highlight-item {
+            background: #f0fdf4;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 5px 0;
+            font-size: 0.9rem;
+            color: #166534;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            color: white;
+        }
+
+        .footer a {
+            color: #fbbf24;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header p {
+                font-size: 1.2rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .step {
+                padding: 20px;
+            }
+            
+            .candidate-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>AI CV Screening Tool</h1>
+            <p>Screen CVs in seconds, not hours</p>
+            <p style="font-size: 1rem; opacity: 0.8;">Free demo - No signup required</p>
+        </header>
+
+        <main class="main-content">
+            <!-- Step 1: Job Description -->
+            <div class="step active" id="step1">
+                <div class="step-header">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Job Description</div>
+                </div>
+                <div class="step-content">
+                    <p style="margin-bottom: 20px; color: #6b7280;">Paste your job description below and we'll extract the key requirements automatically.</p>
+                    
+                    <div class="textarea-container">
+                        <textarea id="jobDescription" placeholder="Paste your job description here...
+
+Example:
+Senior Marketing Manager - B2B SaaS Company
+
+We're looking for an experienced marketing manager to drive growth for our B2B SaaS platform.
+
+Requirements:
+- 5+ years marketing experience in B2B SaaS
+- HubSpot and marketing automation expertise
+- Google Analytics and data-driven decision making
+- Experience with lead generation and nurturing
+- Bachelor's degree in Marketing or related field"></textarea>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <button class="button button-secondary" id="sampleJobBtn">Use Sample Job</button>
+                        <button class="button button-primary" id="extractReqBtn">Extract Requirements</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Upload CVs -->
+            <div class="step" id="step2">
+                <div class="step-header">
+                    <div class="step-number">2</div>
+                    <div class="step-title">Upload CVs</div>
+                </div>
+                <div class="step-content">
+                    <p style="margin-bottom: 20px; color: #6b7280;">Upload up to 10 CVs to see how they match your role requirements.</p>
+                    
+                    <div class="file-upload-area" id="fileUploadArea">
+                        <div class="upload-icon">📄</div>
+                        <div class="upload-text">Drag & drop CVs here or click to browse</div>
+                        <div class="upload-subtext">Supports PDF, DOC, DOCX • Max 10 files</div>
+                    </div>
+                    
+                    <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx" style="display: none;">
+                    
+                    <div id="fileList"></div>
+                    
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button class="button button-secondary" id="sampleCvsBtn">Use Sample CVs</button>
+                        <button class="button button-primary" id="processCvsBtn" disabled>Process CVs</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Processing -->
+            <div class="step hidden" id="step3">
+                <div class="step-header">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Processing</div>
+                </div>
+                <div class="step-content">
+                    <div class="processing">
+                        <div class="spinner"></div>
+                        <p id="processingText">Analyzing CVs with AI...</p>
+                        <p style="color: #6b7280; font-size: 0.9rem; margin-top: 10px;">This usually takes 10-30 seconds</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4: Results -->
+            <div class="step hidden" id="step4">
+                <div class="step-header">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Results</div>
+                </div>
+                <div class="step-content">
+                    <div class="results-header">
+                        <h3>Analysis Complete!</h3>
+                        <div class="time-saved" id="timeSaved">Time saved: 38 minutes 45 seconds</div>
+                        <p style="margin-top: 10px; color: #6b7280;">Manual review would have taken 40 minutes • AI screening took 15 seconds</p>
+                    </div>
+                    
+                    <div class="candidate-list" id="candidateList">
+                        <!-- Results will be populated here -->
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button class="button button-secondary" id="tryAgainBtn">Try Another Role</button>
+                        <button class="button button-primary" id="downloadReportBtn">Download Report</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Built by <a href="mailto:andrew@streetsdigital.com">Streets Digital</a></p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                Want a custom solution for your team? 
+                <a href="mailto:andrew@streetsdigital.com?subject=Custom CV Screening Solution">Get in touch</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Global variables
+        let currentStep = 1;
+        let jobRequirements = {};
+        let uploadedFiles = [];
+        let analysisResults = [];
+
+        // Sample data
+        const sampleJobDescription = `Senior Marketing Manager - B2B SaaS Company
+
+We're looking for an experienced marketing manager to drive growth for our B2B SaaS platform.
+
+Requirements:
+- 5+ years marketing experience in B2B SaaS
+- HubSpot and marketing automation expertise
+- Google Analytics and data-driven decision making
+- Experience with lead generation and nurturing
+- Bachelor's degree in Marketing or related field
+- Strong written and verbal communication skills
+
+Preferred:
+- Experience with ABM strategies
+- SQL knowledge for data analysis
+- Previous startup experience`;
+
+        const sampleCvs = [
+            {
+                name: "Sarah Johnson",
+                score: 94,
+                experience: "7 years",
+                skills: "HubSpot, Google Analytics, Marketing Automation",
+                highlights: ["HubSpot certified", "B2B SaaS experience", "Led 3 successful product launches"],
+                concerns: ["No SQL experience mentioned"]
+            },
+            {
+                name: "Michael Chen",
+                score: 87,
+                experience: "6 years",
+                skills: "Marketing Automation, Lead Generation, Analytics",
+                highlights: ["Marketing automation expert", "Grew MQLs by 150%", "Startup experience"],
+                concerns: ["Limited HubSpot experience"]
+            },
+            {
+                name: "Emily Rodriguez",
+                score: 82,
+                experience: "5 years",
+                skills: "Google Analytics, Content Marketing, ABM",
+                highlights: ["Account-based marketing specialist", "Data-driven approach", "Strong communication skills"],
+                concerns: ["No HubSpot certification", "Limited automation experience"]
+            }
+        ];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeEventListeners();
+        });
+
+        function initializeEventListeners() {
+            // Step 1: Job Description
+            document.getElementById('sampleJobBtn').addEventListener('click', loadSampleJob);
+            document.getElementById('extractReqBtn').addEventListener('click', extractRequirements);
+            
+            // Step 2: File Upload
+            document.getElementById('fileUploadArea').addEventListener('click', () => {
+                document.getElementById('fileInput').click();
+            });
+            
+            document.getElementById('fileInput').addEventListener('change', handleFileSelection);
+            document.getElementById('sampleCvsBtn').addEventListener('click', loadSampleCvs);
+            document.getElementById('processCvsBtn').addEventListener('click', processCvs);
+            
+            // Step 4: Results
+            document.getElementById('tryAgainBtn').addEventListener('click', resetTool);
+            document.getElementById('downloadReportBtn').addEventListener('click', downloadReport);
+            
+            // File upload drag and drop
+            const uploadArea = document.getElementById('fileUploadArea');
+            uploadArea.addEventListener('dragover', handleDragOver);
+            uploadArea.addEventListener('drop', handleDrop);
+            uploadArea.addEventListener('dragleave', handleDragLeave);
+        }
+
+        function loadSampleJob() {
+            document.getElementById('jobDescription').value = sampleJobDescription;
+            showSuccess('Sample job description loaded!');
+        }
+
+        function extractRequirements() {
+            const jobText = document.getElementById('jobDescription').value.trim();
+            
+            if (!jobText) {
+                showError('Please enter a job description first.');
+                return;
+            }
+            
+            // Simple requirements extraction (in real app, this would use AI)
+            jobRequirements = {
+                title: extractJobTitle(jobText),
+                skills: extractSkills(jobText),
+                experience: extractExperience(jobText),
+                education: extractEducation(jobText),
+                keywords: extractKeywords(jobText)
+            };
+            
+            // Move to next step
+            completeStep(1);
+            showStep(2);
+            
+            showSuccess('Requirements extracted successfully!');
+        }
+
+        function extractJobTitle(text) {
+            const lines = text.split('\n');
+            return lines[0].trim() || 'Position';
+        }
+
+        function extractSkills(text) {
+            const skillKeywords = [
+                'HubSpot', 'Salesforce', 'Google Analytics', 'Marketing Automation',
+                'SQL', 'Python', 'JavaScript', 'React', 'Node.js', 'AWS',
+                'Lead Generation', 'ABM', 'SaaS', 'B2B', 'CRM'
+            ];
+            
+            const foundSkills = [];
+            const lowerText = text.toLowerCase();
+            
+            skillKeywords.forEach(skill => {
+                if (lowerText.includes(skill.toLowerCase())) {
+                    foundSkills.push(skill);
+                }
+            });
+            
+            return foundSkills;
+        }
+
+        function extractExperience(text) {
+            const experienceRegex = /(\d+)\+?\s*years?/i;
+            const match = text.match(experienceRegex);
+            return match ? parseInt(match[1]) : 3;
+        }
+
+        function extractEducation(text) {
+            const educationKeywords = ['bachelor', 'master', 'degree', 'university', 'college'];
+            const lowerText = text.toLowerCase();
+            
+            for (let keyword of educationKeywords) {
+                if (lowerText.includes(keyword)) {
+                    return 'degree';
+                }
+            }
+            return 'any';
+        }
+
+        function extractKeywords(text) {
+            const keywords = [];
+            const commonKeywords = [
+                'startup', 'growth', 'analytics', 'data-driven', 'communication',
+                'leadership', 'strategy', 'digital', 'content', 'campaign'
+            ];
+            
+            const lowerText = text.toLowerCase();
+            
+            commonKeywords.forEach(keyword => {
+                if (lowerText.includes(keyword)) {
+                    keywords.push(keyword);
+                }
+            });
+            
+            return keywords;
+        }
+
+        function handleFileSelection(event) {
+            const files = Array.from(event.target.files);
+            processFiles(files);
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            document.getElementById('fileUploadArea').classList.add('drag-over');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            document.getElementById('fileUploadArea').classList.remove('drag-over');
+            
+            const files = Array.from(event.dataTransfer.files);
+            processFiles(files);
+        }
+
+        function handleDragLeave(event) {
+            event.preventDefault();
+            document.getElementById('fileUploadArea').classList.remove('drag-over');
+        }
+
+        function processFiles(files) {
+            // Filter valid files
+            const validFiles = files.filter(file => {
+                const validTypes = ['.pdf', '.doc', '.docx'];
+                const fileName = file.name.toLowerCase();
+                return validTypes.some(type => fileName.endsWith(type));
+            });
+            
+            if (validFiles.length === 0) {
+                showError('Please upload valid CV files (PDF, DOC, or DOCX).');
+                return;
+            }
+            
+            if (validFiles.length > 10) {
+                showError('Maximum 10 files allowed.');
+                return;
+            }
+            
+            uploadedFiles = validFiles;
+            displayFileList();
+            
+            document.getElementById('processCvsBtn').disabled = false;
+            showSuccess(`${validFiles.length} CVs uploaded successfully!`);
+        }
+
+        function displayFileList() {
+            const fileList = document.getElementById('fileList');
+            
+            if (uploadedFiles.length === 0) {
+                fileList.innerHTML = '';
+                return;
+            }
+            
+            let html = '<div style="margin-top: 20px;"><h4>Uploaded Files:</h4><ul style="margin-top: 10px;">';
+            
+            uploadedFiles.forEach(file => {
+                html += `<li style="padding: 5px 0; color: #374151;">${file.name} (${formatFileSize(file.size)})</li>`;
+            });
+            
+            html += '</ul></div>';
+            fileList.innerHTML = html;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function loadSampleCvs() {
+            // Simulate file upload
+            uploadedFiles = [
+                { name: 'Sarah_Johnson_CV.pdf', size: 245760 },
+                { name: 'Michael_Chen_CV.pdf', size: 312892 },
+                { name: 'Emily_Rodriguez_CV.pdf', size: 198432 }
+            ];
+            
+            displayFileList();
+            document.getElementById('processCvsBtn').disabled = false;
+            showSuccess('Sample CVs loaded!');
+        }
+
+        function processCvs() {
+            if (uploadedFiles.length === 0) {
+                showError('Please upload some CVs first.');
+                return;
+            }
+            
+            // Show processing step
+            completeStep(2);
+            showStep(3);
+            
+            // Simulate AI processing
+            simulateProcessing();
+        }
+
+        function simulateProcessing() {
+            const messages = [
+                'Extracting text from CVs...',
+                'Analyzing candidate profiles...',
+                'Matching skills and experience...',
+                'Calculating compatibility scores...',
+                'Generating insights...'
+            ];
+            
+            let messageIndex = 0;
+            const processingText = document.getElementById('processingText');
+            
+            const interval = setInterval(() => {
+                if (messageIndex < messages.length) {
+                    processingText.textContent = messages[messageIndex];
+                    messageIndex++;
+                } else {
+                    clearInterval(interval);
+                    completeProcessing();
+                }
+            }, 2000);
+        }
+
+        function completeProcessing() {
+            // Generate results (in real app, this would come from AI analysis)
+            analysisResults = uploadedFiles.map((file, index) => {
+                if (index < sampleCvs.length) {
+                    return sampleCvs[index];
+                }
+                
+                // Generate mock results for additional files
+                const mockNames = ['David Wilson', 'Lisa Park', 'James Anderson', 'Maria Garcia'];
+                const mockScores = [78, 85, 71, 89];
+                
+                return {
+                    name: mockNames[index % mockNames.length] || `Candidate ${index + 1}`,
+                    score: mockScores[index % mockScores.length] || Math.floor(Math.random() * 30) + 60,
+                    experience: `${Math.floor(Math.random() * 5) + 3} years`,
+                    skills: 'Various marketing skills',
+                    highlights: ['Marketing experience', 'Strong communication skills'],
+                    concerns: ['Some requirements missing']
+                };
+            });
+            
+            // Sort by score (highest first)
+            analysisResults.sort((a, b) => b.score - a.score);
+            
+            // Calculate time saved
+            const manualTime = uploadedFiles.length * 5; // 5 minutes per CV
+            const aiTime = 0.25; // 15 seconds
+            const timeSaved = manualTime - aiTime;
+            
+            // Show results
+            completeStep(3);
+            showStep(4);
+            displayResults(timeSaved);
+        }
+
+        function displayResults(timeSaved) {
+            // Update time saved
+            const timeSavedElement = document.getElementById('timeSaved');
+            const minutes = Math.floor(timeSaved);
+            const seconds = Math.round((timeSaved - minutes) * 60);
+            timeSavedElement.textContent = `Time saved: ${minutes} minutes ${seconds} seconds`;
+            
+            // Display candidates
+            const candidateList = document.getElementById('candidateList');
+            let html = '';
+            
+            analysisResults.forEach((candidate, index) => {
+                html += `
+                    <div class="candidate-card">
+                        <div class="candidate-header">
+                            <div class="candidate-name">${candidate.name}</div>
+                            <div class="candidate-score">${candidate.score}%</div>
+                        </div>
+                        <div class="candidate-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Experience:</span> ${candidate.experience}
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Key Skills:</span> ${candidate.skills}
+                            </div>
+                        </div>
+                        <div class="highlights">
+                            <strong>Highlights:</strong>
+                            ${candidate.highlights.map(highlight => 
+                                `<div class="highlight-item">✓ ${highlight}</div>`
+                            ).join('')}
+                        </div>
+                        ${candidate.concerns.length > 0 ? `
+                            <div style="margin-top: 10px; font-size: 0.9rem; color: #dc2626;">
+                                <strong>Areas to explore:</strong> ${candidate.concerns.join(', ')}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            candidateList.innerHTML = html;
+        }
+
+        function downloadReport() {
+            // Create a simple text report
+            let report = `AI CV Screening Report\n`;
+            report += `Generated on: ${new Date().toLocaleDateString()}\n`;
+            report += `Job Role: ${jobRequirements.title}\n\n`;
+            
+            report += `Summary:\n`;
+            report += `- CVs Processed: ${analysisResults.length}\n`;
+            report += `- Processing Time: 15 seconds\n`;
+            report += `- Manual Time Would Take: ${analysisResults.length * 5} minutes\n\n`;
+            
+            report += `Candidates (ranked by compatibility):\n\n`;
+            
+            analysisResults.forEach((candidate, index) => {
+                report += `${index + 1}. ${candidate.name} - ${candidate.score}%\n`;
+                report += `   Experience: ${candidate.experience}\n`;
+                report += `   Skills: ${candidate.skills}\n`;
+                report += `   Highlights: ${candidate.highlights.join(', ')}\n`;
+                if (candidate.concerns.length > 0) {
+                    report += `   Areas to explore: ${candidate.concerns.join(', ')}\n`;
+                }
+                report += `\n`;
+            });
+            
+            // Download the report
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'CV_Screening_Report.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showSuccess('Report downloaded successfully!');
+        }
+
+        function resetTool() {
+            currentStep = 1;
+            uploadedFiles = [];
+            analysisResults = [];
+            jobRequirements = {};
+            
+            document.getElementById('jobDescription').value = '';
+            document.getElementById('fileList').innerHTML = '';
+            document.getElementById('processCvsBtn').disabled = true;
+            
+            // Reset all steps
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active', 'completed');
+            });
+            
+            showStep(1);
+            showSuccess('Tool reset! Ready for a new role.');
+        }
+
+        function showStep(stepNumber) {
+            currentStep = stepNumber;
+            
+            // Hide all steps
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.add('hidden');
+            });
+            
+            // Show current step
+            document.getElementById(`step${stepNumber}`).classList.remove('hidden');
+            document.getElementById(`step${stepNumber}`).classList.add('active');
+            
+            // Scroll to step
+            document.getElementById(`step${stepNumber}`).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function completeStep(stepNumber) {
+            const step = document.getElementById(`step${stepNumber}`);
+            step.classList.remove('active');
+            step.classList.add('completed');
+        }
+
+        function showError(message) {
+            // Simple error display - in production, use a proper notification system
+            alert('Error: ' + message);
+        }
+
+        function showSuccess(message) {
+            // Simple success display - in production, use a proper notification system
+            console.log('Success: ' + message);
+        }
+    </script>
+</body>
+</html>
